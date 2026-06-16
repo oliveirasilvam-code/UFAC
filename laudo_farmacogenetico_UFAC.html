@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Teste Farmacogenético — Caso Didático</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; font-size: 12px; color: #1a1a1a; background: #f5f5f5; }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 10px auto;
+    background: white;
+    padding: 18mm 16mm 14mm 16mm;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    page-break-after: always;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 3px solid #c0392b;
+    padding-bottom: 8px;
+    margin-bottom: 14px;
+  }
+  .logo-name { font-size: 20px; font-weight: 900; color: #c0392b; }
+  .logo-sub  { font-size: 9px; color: #888; letter-spacing: 2px; text-transform: uppercase; }
+  .report-title { font-size: 17px; font-weight: bold; color: #2c3e50; text-align: right; }
+
+  .aviso {
+    background: #fff3cd;
+    border: 1.5px solid #ffc107;
+    border-radius: 4px;
+    padding: 6px 10px;
+    margin-bottom: 12px;
+    font-size: 10px;
+    color: #856404;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid #ddd;
+    margin-bottom: 12px;
+  }
+  .info-section { padding: 9px 11px; border-right: 1px solid #ddd; }
+  .info-section:last-child { border-right: none; }
+  .info-section h3 { font-size: 10px; font-weight: bold; color: #c0392b; text-transform: uppercase; margin-bottom: 5px; border-bottom: 1px solid #eee; padding-bottom: 2px; }
+  .info-row { display: flex; margin-bottom: 3px; font-size: 11px; }
+  .info-label { color: #555; width: 115px; flex-shrink: 0; }
+  .info-value { font-weight: bold; }
+
+  .section-title {
+    background: #2c3e50;
+    color: white;
+    font-weight: bold;
+    font-size: 11px;
+    padding: 6px 10px;
+    margin-bottom: 0;
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+  th { background: #c0392b; color: white; padding: 5px 8px; text-align: left; font-size: 10px; font-weight: bold; }
+  td { padding: 5px 8px; border-bottom: 1px solid #eee; font-size: 11px; vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafa; }
+
+  .geno { font-family: monospace; background: #eee; padding: 1px 4px; border-radius: 2px; font-size: 10px; }
+
+  .drug-card { border: 1px solid #ddd; border-radius: 4px; margin-bottom: 9px; overflow: hidden; }
+  .drug-card-header { display: flex; align-items: center; padding: 7px 11px; gap: 9px; border-bottom: 1px solid #ddd; }
+  .drug-card-header.green  { background: #d4edda; }
+  .drug-card-header.yellow { background: #fff3cd; }
+  .drug-card-header.red    { background: #f8d7da; }
+  .drug-name { font-weight: bold; font-size: 12px; flex: 1; }
+  .drug-body { padding: 8px 11px; font-size: 11px; line-height: 1.65; }
+
+  .badge { display: inline-block; padding: 2px 6px; border-radius: 8px; font-size: 9px; font-weight: bold; }
+  .badge-green  { background: #d4edda; color: #155724; }
+  .badge-yellow { background: #fff3cd; color: #856404; }
+  .badge-red    { background: #f8d7da; color: #721c24; }
+
+  .risk-card { border: 1px solid #ddd; border-radius: 4px; margin-bottom: 9px; overflow: hidden; }
+  .risk-header { display: flex; align-items: center; padding: 6px 11px; gap: 8px; font-weight: bold; font-size: 11px; border-bottom: 1px solid #ddd; }
+  .risk-header.yellow { background: #fff3cd; }
+  .risk-header.red    { background: #f8d7da; }
+  .risk-header.green  { background: #d4edda; }
+  .risk-body { padding: 8px 11px; font-size: 11px; line-height: 1.65; }
+
+  .summary-card { border: 1.5px solid #2c3e50; border-radius: 6px; overflow: hidden; margin-bottom: 12px; }
+  .summary-header { background: #2c3e50; color: white; padding: 7px 12px; font-weight: bold; font-size: 12px; }
+  .summary-body { padding: 8px 12px; }
+  .summary-row { display: flex; border-bottom: 1px solid #eee; padding: 4px 0; font-size: 11px; align-items: center; gap: 8px; }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-gene { font-family: monospace; font-weight: bold; width: 75px; color: #c0392b; }
+  .summary-geno { font-family: monospace; background: #f0f0f0; padding: 1px 4px; border-radius: 2px; width: 125px; font-size: 10px; }
+  .summary-pheno { flex: 1; }
+
+  .guide-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 11px; }
+  .guide-item { display: flex; align-items: flex-start; gap: 7px; padding: 7px; border: 1px solid #ddd; border-radius: 4px; font-size: 10.5px; }
+
+  .pathway { display: flex; align-items: center; gap: 5px; margin: 9px 0; flex-wrap: wrap; }
+  .pathway-box { padding: 5px 9px; border-radius: 3px; font-size: 10px; font-weight: bold; text-align: center; }
+  .pathway-box.substrate { background: #2c3e50; color: white; }
+  .pathway-box.enzyme    { background: #8e44ad; color: white; }
+  .pathway-box.product   { background: #27ae60; color: white; }
+  .pathway-box.blocked   { background: #c0392b; color: white; }
+  .pathway-arrow { color: #999; font-size: 14px; }
+
+  .mono-section { font-weight: bold; color: #c0392b; font-size: 10.5px; margin: 9px 0 3px 0; text-transform: uppercase; letter-spacing: 0.4px; }
+  .mono-text { font-size: 11px; line-height: 1.7; text-align: justify; }
+
+  .footer { border-top: 1.5px solid #c0392b; padding-top: 5px; margin-top: 12px; display: flex; justify-content: space-between; font-size: 9px; color: #888; }
+
+  @media print { body { background: white; } .page { margin: 0; box-shadow: none; } }
+</style>
+</head>
+<body>
+
+<!-- PÁGINA 1 — CAPA -->
+<div class="page">
+  <div class="header">
+    <div>
+      <div class="logo-name">UFAC · GenômiCA</div>
+      <div class="logo-sub">Laboratório de Farmacogenômica Clínica — UFAC</div>
+    </div>
+    <div class="report-title">TESTE FARMACOGENÉTICO</div>
+  </div>
+
+  <div class="aviso">
+    <strong>DOCUMENTO DIDÁTICO — USO EXCLUSIVO EM AULA.</strong>
+    Dados completamente fictícios. Não substitui laudos clínicos reais.
+  </div>
+
+  <div class="info-grid">
+    <div class="info-section">
+      <h3>Paciente</h3>
+      <div class="info-row"><span class="info-label">Nome:</span><span class="info-value">CARLOS AUGUSTO FERREIRA LIMA</span></div>
+      <div class="info-row"><span class="info-label">Data de nascimento:</span><span class="info-value">12/03/1968</span></div>
+      <div class="info-row"><span class="info-label">Gênero:</span><span class="info-value">Masculino</span></div>
+    </div>
+    <div class="info-section">
+      <h3>Amostra</h3>
+      <div class="info-row"><span class="info-label">Data da coleta:</span><span class="info-value">08/04/2026</span></div>
+      <div class="info-row"><span class="info-label">Data do resultado:</span><span class="info-value">15/04/2026</span></div>
+      <div class="info-row"><span class="info-label">Tipo de amostra:</span><span class="info-value">Swab bucal</span></div>
+      <div class="info-row"><span class="info-label">Nº de acesso:</span><span class="info-value">GP-2026-00842</span></div>
+    </div>
+  </div>
+  <div class="info-grid">
+    <div class="info-section">
+      <h3>Solicitado por</h3>
+      <div class="info-row"><span class="info-label">Médico:</span><span class="info-value">Dra. Renata Monteiro Souza</span></div>
+      <div class="info-row"><span class="info-label">CRM:</span><span class="info-value">CRM-SP 148.922</span></div>
+      <div class="info-row"><span class="info-label">Indicação:</span><span class="info-value">S. coronariana + depressão + dor crônica</span></div>
+    </div>
+    <div class="info-section">
+      <h3>Medicações Atuais</h3>
+      <div class="info-row"><span class="info-value">Clopidogrel · Atorvastatina · Sertralina · Codeína (SOS)</span></div>
+    </div>
+  </div>
+
+  <!-- GUIA -->
+  <div class="section-title" style="margin-bottom:8px;">GUIA DE INTERPRETAÇÃO</div>
+  <div class="guide-grid">
+    <div class="guide-item"><span style="font-size:16px;">🚩</span><div>Eficácia potencialmente <strong>reduzida ou toxicidade aumentada</strong>. Ajuste ou troca recomendada.</div></div>
+    <div class="guide-item"><span style="font-size:16px;">⚠️</span><div>Diretrizes para <strong>ajuste de dosagem</strong> ou vigilância acrescida.</div></div>
+    <div class="guide-item"><span style="font-size:16px;">✅</span><div>Medicamento pode ser prescrito conforme <strong>terapêutica padrão</strong>.</div></div>
+    <div class="guide-item"><span style="font-size:16px;">*</span><div><strong>Determinado:</strong> recomendação baseada em diretrizes CPIC / DPWG / FDA.<br><strong>**Informativo:</strong> dados preliminares ou insuficientes.</div></div>
+  </div>
+
+  <!-- TABELA GERAL -->
+  <div class="section-title">DETALHES DO TESTE</div>
+  <table>
+    <thead>
+      <tr><th>Gene</th><th>Genótipo</th><th>Fenótipo</th><th></th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>CYP2C19</strong></td><td><span class="geno">*2/*2</span></td><td>Metabolizador <strong>lento</strong></td><td>🚩</td></tr>
+      <tr><td><strong>CYP2D6</strong></td><td><span class="geno">*4/*4</span></td><td>Metabolizador <strong>lento</strong></td><td>🚩</td></tr>
+      <tr><td><strong>CYP3A5</strong></td><td><span class="geno">*3/*3</span></td><td>Metabolizador <strong>lento</strong></td><td>⚠️</td></tr>
+      <tr><td><strong>CYP2C9</strong></td><td><span class="geno">*1/*1</span></td><td>Metabolizador normal</td><td>✅</td></tr>
+      <tr><td><strong>CYP1A2</strong></td><td><span class="geno">*1A/*1A</span></td><td>Metabolizador normal – possível indutibilidade</td><td>✅</td></tr>
+      <tr><td><strong>CYP2B6</strong></td><td><span class="geno">*1/*1</span></td><td>Metabolizador normal</td><td>✅</td></tr>
+      <tr><td><strong>SLCO1B1</strong></td><td><span class="geno">521T>C TC</span></td><td>Função de transporte <strong>intermediária</strong></td><td>⚠️</td></tr>
+      <tr><td><strong>OPRM1</strong></td><td><span class="geno">A118G GG</span></td><td>Função OPRM1 <strong>alterada</strong></td><td>⚠️</td></tr>
+      <tr><td><strong>VKORC1</strong></td><td><span class="geno">1639G>A A/A</span></td><td>Alta sensibilidade à varfarina</td><td>⚠️</td></tr>
+      <tr><td><strong>APOE</strong></td><td><span class="geno">ε3/ε4</span></td><td>Risco moderado de hiperlipidemia / DAC</td><td>⚠️</td></tr>
+      <tr><td><strong>MTHFR 677C>T</strong></td><td><span class="geno">TT</span></td><td>Atividade MTHFR <strong>reduzida (~30%)</strong></td><td>🚩</td></tr>
+      <tr><td><strong>MTHFR 1298A>C</strong></td><td><span class="geno">AA</span></td><td>Atividade normal</td><td>✅</td></tr>
+      <tr><td><strong>Fator II</strong></td><td><span class="geno">20210G>A GG</span></td><td>Ausência de risco aumentado para trombose</td><td>✅</td></tr>
+      <tr><td><strong>Fator V Leiden</strong></td><td><span class="geno">1691G>A GG</span></td><td>Ausência de risco aumentado para trombose</td><td>✅</td></tr>
+      <tr><td><strong>DPYD</strong></td><td><span class="geno">*1/*1</span></td><td>Atividade normal de DPD</td><td>✅</td></tr>
+      <tr><td><strong>COMT Val158Met</strong></td><td><span class="geno">AA (Met/Met)</span></td><td>Atividade COMT <strong>baixa</strong></td><td>⚠️</td></tr>
+      <tr><td><strong>UGT2B15</strong></td><td><span class="geno">*1/*1</span></td><td>Metabolizador normal</td><td>✅</td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <div>Paciente: CARLOS AUGUSTO FERREIRA LIMA &nbsp;|&nbsp; DOCUMENTO DIDÁTICO FICTÍCIO</div>
+    <div>GP-2026-00842</div>
+    <div>Página 1 de 4</div>
+  </div>
+</div>
+
+
+<!-- PÁGINA 2 — MEDICAÇÕES DO PACIENTE -->
+<div class="page">
+  <div class="header">
+    <div><div class="logo-name">UFAC · GenômiCA</div><div class="logo-sub">Laboratório de Farmacogenômica Clínica — UFAC</div></div>
+    <div class="report-title">TESTE FARMACOGENÉTICO</div>
+  </div>
+
+  <div class="section-title" style="margin-bottom:11px;">MEDICAÇÕES DO PACIENTE — ORIENTAÇÃO FARMACOGENÉTICA</div>
+
+  <!-- CLOPIDOGREL -->
+  <div class="drug-card">
+    <div class="drug-card-header red">
+      <span>🚩</span>
+      <div class="drug-name">Clopidogrel (Plavix) — Antiagregante plaquetário</div>
+      <span class="badge badge-red">TROCAR · DETERMINADO *</span>
+    </div>
+    <div class="drug-body">
+      <strong>Resposta gravemente reduzida ao clopidogrel</strong>
+      (<span class="geno">CYP2C19 *2/*2 — Metabolizador lento</span>).<br><br>
+      O clopidogrel é um pró-fármaco que depende do CYP2C19 para ser convertido em seu metabólito ativo.
+      O paciente apresenta dois alelos *2 não funcionais, resultando em ausência completa de atividade enzimática
+      CYP2C19. Consequentemente, o clopidogrel não é ativado e as plaquetas não são inibidas de forma eficaz,
+      com risco significativamente elevado de trombose em stent e eventos cardiovasculares recorrentes.<br><br>
+      <strong>Orientação CPIC (nível A):</strong> Substituir clopidogrel por <strong>prasugrel</strong> ou
+      <strong>ticagrelor</strong>, que não dependem de ativação pelo CYP2C19 para exercer efeito antiagregante.
+      Ticagrelor deve ser evitado em pacientes com histórico de AVC/AIT.
+    </div>
+  </div>
+
+  <!-- CODEÍNA -->
+  <div class="drug-card">
+    <div class="drug-card-header red">
+      <span>🚩</span>
+      <div class="drug-name">Codeína (uso SOS) — Opioide analgésico</div>
+      <span class="badge badge-red">INEFICAZ · DETERMINADO *</span>
+    </div>
+    <div class="drug-body">
+      <strong>Resposta gravemente reduzida à codeína</strong>
+      (<span class="geno">CYP2D6 *4/*4 — Metabolizador lento</span>).<br><br>
+      A codeína é um pró-fármaco convertido em morfina pelo CYP2D6. Com genótipo *4/*4
+      (dois alelos sem função), a conversão não ocorre e a analgesia é ausente ou mínima.
+      O paciente recebe o fármaco sem obter efeito terapêutico.<br><br>
+      Adicionalmente, o genótipo <span class="geno">OPRM1 A118G GG</span> indica que os receptores
+      mu-opioides apresentam sensibilidade reduzida, o que reforça a necessidade de dose maior
+      caso opioides alternativos sejam prescritos.<br><br>
+      <strong>Orientação CPIC (nível A):</strong> Evitar codeína e tramadol (também depende parcialmente
+      de CYP2D6). Considerar <strong>morfina, hidromorfona ou oxicodona</strong> com titulação individualizada,
+      levando em conta o perfil OPRM1 do paciente.
+    </div>
+  </div>
+
+  <!-- ATORVASTATINA -->
+  <div class="drug-card">
+    <div class="drug-card-header yellow">
+      <span>⚠️</span>
+      <div class="drug-name">Atorvastatina (Lipitor) — Hipolipemiante</div>
+      <span class="badge badge-yellow">CAUTELA · DUPLO IMPACTO **</span>
+    </div>
+    <div class="drug-body">
+      <strong>Risco aumentado de miopatia por dois mecanismos independentes:</strong><br><br>
+      <strong>(1) SLCO1B1 <span class="geno">521T>C TC</span> — Transportador intermediário:</strong>
+      O transportador hepático OATP1B1 (SLCO1B1) apresenta função reduzida, diminuindo a captação
+      hepática de atorvastatina e elevando sua concentração plasmática sistêmica.<br><br>
+      <strong>(2) CYP3A5 <span class="geno">*3/*3</span> — Metabolizador lento:</strong>
+      A eliminação hepática da atorvastatina está adicionalmente comprometida, aumentando ainda
+      mais a exposição ao fármaco.<br><br>
+      <strong>Orientação:</strong> Monitorar sintomas musculares e dosagem de CK periodicamente.
+      Considerar redução de dose ou troca para <strong>pravastatina ou rosuvastatina em dose baixa</strong>,
+      que têm perfis farmacocinéticos menos dependentes dessas vias.
+    </div>
+  </div>
+
+  <!-- SERTRALINA -->
+  <div class="drug-card">
+    <div class="drug-card-header yellow">
+      <span>⚠️</span>
+      <div class="drug-name">Sertralina (Zoloft) — Antidepressivo ISRS</div>
+      <span class="badge badge-yellow">MONITORAR · INFORMATIVO **</span>
+    </div>
+    <div class="drug-body">
+      <strong>Sensibilidade aumentada à sertralina</strong>
+      (<span class="geno">CYP2C19 *2/*2 — Metabolizador lento</span>).<br><br>
+      A sertralina é parcialmente metabolizada pelo CYP2C19. Metabolizadores lentos podem apresentar
+      concentrações plasmáticas mais elevadas, aumentando o risco de efeitos adversos dose-dependentes
+      (náusea, insônia, disfunção sexual, prolongamento do intervalo QTc em doses altas).<br><br>
+      <strong>Orientação:</strong> Iniciar com dose reduzida (25 mg/dia) e titular lentamente até
+      resposta clínica. Escitalopram ou desvenlafaxina podem ser considerados como alternativas
+      com menor dependência de CYP2C19.
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>Paciente: CARLOS AUGUSTO FERREIRA LIMA &nbsp;|&nbsp; DOCUMENTO DIDÁTICO FICTÍCIO</div>
+    <div>GP-2026-00842</div>
+    <div>Página 2 de 4</div>
+  </div>
+</div>
+
+
+<!-- PÁGINA 3 — GESTÃO DE RISCO -->
+<div class="page">
+  <div class="header">
+    <div><div class="logo-name">UFAC · GenômiCA</div><div class="logo-sub">Laboratório de Farmacogenômica Clínica — UFAC</div></div>
+    <div class="report-title">TESTE FARMACOGENÉTICO</div>
+  </div>
+
+  <div class="section-title" style="margin-bottom:11px;">GESTÃO DE RISCO — CONDIÇÕES RELACIONADAS AOS GENÓTIPOS</div>
+
+  <div class="risk-card">
+    <div class="risk-header red"><span>🚩</span> Doença Cardiovascular Aterosclerótica — Risco Moderado-Alto</div>
+    <div class="risk-body">
+      <strong>Genótipo APOE: <span class="geno">ε3/ε4</span></strong><br>
+      O alelo ε4 está associado a redução da capacidade do HDL de se ligar ao seu receptor hepático,
+      resultando em elevação de LDL-colesterol, triglicerídeos e aumento do risco de doença
+      cardiovascular aterosclerótica e demência.<br><br>
+      <strong>Orientação:</strong> Ajuste dietético com restrição de gorduras saturadas.
+      Estatinas são a primeira escolha — considerar o risco de miopatia identificado pelo
+      SLCO1B1/CYP3A5 ao selecionar o agente e a dose. Monitorar lipidograma a cada 3 meses.
+    </div>
+  </div>
+
+  <div class="risk-card">
+    <div class="risk-header red"><span>🚩</span> Hiperhomocisteinemia — Risco Elevado</div>
+    <div class="risk-body">
+      <strong>Genótipo MTHFR 677C>T: <span class="geno">TT (homozigoto)</span></strong><br>
+      A atividade da enzima metilenotetraidrofolato redutase está reduzida a aproximadamente 30%
+      do normal. Isso compromete a remetilação da homocisteína, predispondo a hiperhomocisteinemia,
+      que é fator de risco independente para eventos cardiovasculares, tromboembolismo venoso
+      e, em pacientes com depressão, pior resposta a antidepressivos.<br><br>
+      <strong>Orientação:</strong> Dosar homocisteína plasmática e folato sérico.
+      Suplementar com <strong>metilfolato</strong> (L-5-MTHF), e não ácido fólico convencional,
+      pois a conversão deste ao metabólito ativo depende justamente da enzima deficiente.
+      Associar vitamina B12 e B6. Reavaliar homocisteína em 90 dias.
+    </div>
+  </div>
+
+  <div class="risk-card">
+    <div class="risk-header yellow"><span>⚠️</span> Varfarina (uso futuro) — Alta Sensibilidade Prevista</div>
+    <div class="risk-body">
+      <strong>Genótipos: <span class="geno">VKORC1 1639G>A A/A</span> + <span class="geno">CYP2C9 *1/*1</span></strong><br>
+      Caso varfarina seja prescrita futuramente (ex. fibrilação atrial), o genótipo VKORC1 A/A
+      indica necessidade de dose substancialmente menor que a padrão. A dose estimada pelo
+      algoritmo farmacogenético situa-se entre <strong>2 e 3 mg/dia</strong>, em comparação à
+      dose inicial habitual de 5–7 mg/dia na população geral.<br><br>
+      <strong>Orientação:</strong> Iniciar com dose baixa e titular pelo INR. Tempo estimado
+      para atingir estado estável: 4–5 dias. Monitoramento intensivo na fase de indução.
+    </div>
+  </div>
+
+  <div class="risk-card">
+    <div class="risk-header yellow"><span>⚠️</span> Modulação Dopaminérgica — COMT Val158Met</div>
+    <div class="risk-body">
+      <strong>Genótipo COMT: <span class="geno">AA (Met/Met) — Atividade baixa</span></strong><br>
+      A variante Met/Met resulta em degradação mais lenta de dopamina e norepinefrina no
+      córtex pré-frontal. O paciente pode apresentar melhor resposta a estimulantes
+      (anfetaminas, metilfenidato) e influência no limiar de dor crônica.<br><br>
+      Combinado ao genótipo <span class="geno">OPRM1 A118G GG</span>, o perfil de resposta
+      a analgésicos opioides e a modulação de dor deste paciente estão alterados em dois
+      níveis independentes do sistema endógeno de controle da dor.
+    </div>
+  </div>
+
+  <div class="risk-card">
+    <div class="risk-header green"><span>✅</span> Trombofilia Hereditária — Sem Risco Aumentado</div>
+    <div class="risk-body">
+      <strong>Fator II <span class="geno">GG</span> e Fator V Leiden <span class="geno">GG</span></strong><br>
+      Ausência das mutações G20210A do Fator II e G1691A do Fator V de Leiden.
+      Risco de tromboembolismo venoso não aumentado por essas variantes.
+      A menos que outros fatores de risco genéticos ou circunstanciais estejam presentes,
+      contraceptivos contendo estrogênio e terapia de reposição hormonal podem ser utilizados
+      sem restrição por este critério.
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>Paciente: CARLOS AUGUSTO FERREIRA LIMA &nbsp;|&nbsp; DOCUMENTO DIDÁTICO FICTÍCIO</div>
+    <div>GP-2026-00842</div>
+    <div>Página 3 de 4</div>
+  </div>
+</div>
+
+
+<!-- PÁGINA 4 — CARTÃO RESUMO + MONOGRAFIA CYP2C19 -->
+<div class="page">
+  <div class="header">
+    <div><div class="logo-name">UFAC · GenômiCA</div><div class="logo-sub">Laboratório de Farmacogenômica Clínica — UFAC</div></div>
+    <div class="report-title">TESTE FARMACOGENÉTICO</div>
+  </div>
+
+  <div class="summary-card">
+    <div class="summary-header">CARTÃO DE REFERÊNCIA DO PACIENTE</div>
+    <div class="summary-body">
+      <div class="summary-row" style="font-weight:bold; background:#f5f5f5; font-size:10px;">
+        <span class="summary-gene">GENE</span>
+        <span class="summary-geno">GENÓTIPO</span>
+        <span class="summary-pheno">FENÓTIPO</span>
+      </div>
+      <div class="summary-row"><span class="summary-gene">CYP2C19</span><span class="summary-geno">*2/*2</span><span class="summary-pheno"><span class="badge badge-red">Metabolizador lento</span> — Clopidogrel e sertralina afetados</span></div>
+      <div class="summary-row"><span class="summary-gene">CYP2D6</span><span class="summary-geno">*4/*4</span><span class="summary-pheno"><span class="badge badge-red">Metabolizador lento</span> — Codeína ineficaz</span></div>
+      <div class="summary-row"><span class="summary-gene">CYP3A5</span><span class="summary-geno">*3/*3</span><span class="summary-pheno"><span class="badge badge-yellow">Metabolizador lento</span> — Estatinas: exposição aumentada</span></div>
+      <div class="summary-row"><span class="summary-gene">CYP2C9</span><span class="summary-geno">*1/*1</span><span class="summary-pheno"><span class="badge badge-green">Normal</span></span></div>
+      <div class="summary-row"><span class="summary-gene">SLCO1B1</span><span class="summary-geno">521T>C TC</span><span class="summary-pheno"><span class="badge badge-yellow">Transporte ↓</span> — Risco de miopatia por estatinas</span></div>
+      <div class="summary-row"><span class="summary-gene">OPRM1</span><span class="summary-geno">A118G GG</span><span class="summary-pheno"><span class="badge badge-yellow">Função alterada</span> — Opioides: necessidade de dose maior</span></div>
+      <div class="summary-row"><span class="summary-gene">VKORC1</span><span class="summary-geno">1639G>A A/A</span><span class="summary-pheno"><span class="badge badge-yellow">Alta sensibilidade</span> — Varfarina: dose inicial ~2–3 mg/dia</span></div>
+      <div class="summary-row"><span class="summary-gene">APOE</span><span class="summary-geno">ε3/ε4</span><span class="summary-pheno"><span class="badge badge-yellow">Risco ↑</span> — DAC e hiperlipidemia</span></div>
+      <div class="summary-row"><span class="summary-gene">MTHFR 677</span><span class="summary-geno">TT</span><span class="summary-pheno"><span class="badge badge-red">Atividade ~30%</span> — Hiperhomocisteinemia; usar metilfolato</span></div>
+      <div class="summary-row"><span class="summary-gene">COMT</span><span class="summary-geno">AA (Met/Met)</span><span class="summary-pheno"><span class="badge badge-yellow">Atividade baixa</span> — Dopamina ↑; influência na dor</span></div>
+    </div>
+  </div>
+
+  <!-- MONOGRAFIA CYP2C19 -->
+  <div class="section-title" style="margin-bottom:8px;">CYP2C19 — MONOGRAFIA</div>
+
+  <div class="mono-section">Utilidade Clínica</div>
+  <div class="mono-text">
+    O citocromo P450 2C19 (CYP2C19) está envolvido no metabolismo de aproximadamente 10% dos
+    medicamentos clinicamente relevantes, incluindo antidepressivos, benzodiazepinas, inibidores
+    da bomba de prótons e antiagregantes plaquetários. O alelo *1 é o tipo selvagem e codifica enzima
+    funcional. Os alelos *2 e *3 são alelos de perda de função. Indivíduos com dois alelos de perda
+    de função (*2/*2, *3/*3 ou *2/*3) são classificados como metabolizadores lentos, não expressam
+    enzima CYP2C19 funcional e apresentam alterações clinicamente significativas no metabolismo dos
+    substratos desta via.
+  </div>
+
+  <div class="mono-section">Via de Ativação do Clopidogrel</div>
+  <div class="pathway">
+    <div class="pathway-box substrate">Clopidogrel<br>(pró-fármaco inativo)</div>
+    <div class="pathway-arrow">→</div>
+    <div class="pathway-box enzyme">CYP2C19<br>❌ ausente em *2/*2</div>
+    <div class="pathway-arrow">→</div>
+    <div class="pathway-box blocked">Metabólito ativo<br>não formado</div>
+    <div class="pathway-arrow">→</div>
+    <div class="pathway-box blocked">P2RY12 não inibido<br>Plaquetas ativas</div>
+  </div>
+
+  <div class="mono-section">Via de Ativação da Codeína</div>
+  <div class="pathway">
+    <div class="pathway-box substrate">Codeína<br>(pró-fármaco)</div>
+    <div class="pathway-arrow">→</div>
+    <div class="pathway-box enzyme">CYP2D6<br>❌ ausente em *4/*4</div>
+    <div class="pathway-arrow">→</div>
+    <div class="pathway-box blocked">Morfina<br>não formada</div>
+    <div class="pathway-arrow">→</div>
+    <div class="pathway-box blocked">OPRM1<br>(A118G — ↓ afinidade)</div>
+    <div class="pathway-arrow">→</div>
+    <div class="pathway-box blocked">Sem analgesia</div>
+  </div>
+
+  <div class="mono-section">Comentários Técnicos</div>
+  <div class="mono-text">
+    O resultado da genotipagem não elimina a necessidade de considerar fatores não genéticos que
+    possam influenciar os requisitos de dose: função hepática e renal, uso concomitante de inibidores
+    ou indutores enzimáticos e condições clínicas associadas. O teste de DNA não substitui o
+    acompanhamento clínico e terapêutico do medicamento. Resultados devem ser interpretados pelo
+    médico prescritor em conjunto com o contexto clínico do paciente.
+  </div>
+
+  <div style="margin-top:13px; border:1.5px solid #c0392b; border-radius:4px; padding:8px 11px; background:#fff5f5; font-size:10px; color:#555;">
+    <strong style="color:#c0392b;">AVISO FINAL — DOCUMENTO DIDÁTICO</strong><br>
+    Todos os dados são fictícios. Elaborado para a disciplina de Genética (graduação) — uso exclusivo em aula.
+    Os conceitos farmacogenéticos descritos baseiam-se em evidências reais (CPIC, DPWG, FDA, 2026).
+  </div>
+
+  <div class="footer">
+    <div>Paciente: CARLOS AUGUSTO FERREIRA LIMA &nbsp;|&nbsp; DOCUMENTO DIDÁTICO FICTÍCIO</div>
+    <div>GP-2026-00842</div>
+    <div>Página 4 de 7</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PÁGINA 5 — MEDICAMENTOS POTENCIALMENTE IMPACTADOS (1/3)
+     Cardiovascular + Psicotrópicos antidepressivos
+     ═══════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="header">
+    <div><div class="logo-name">UFAC · GenômiCA</div><div class="logo-sub">Laboratório de Farmacogenômica Clínica — UFAC</div></div>
+    <div class="report-title">TESTE FARMACOGENÉTICO</div>
+  </div>
+
+  <div class="section-title" style="margin-bottom:4px;">MEDICAMENTOS POTENCIALMENTE IMPACTADOS</div>
+  <div style="font-size:10px; color:#666; margin-bottom:10px; padding:4px 0;">
+    Com base nos genótipos deste paciente, os fármacos abaixo têm eficácia ou segurança potencialmente alteradas.
+    A classificação reflete o impacto esperado considerando <strong>CYP2C19 *2/*2</strong>, <strong>CYP2D6 *4/*4</strong>,
+    <strong>CYP3A5 *3/*3</strong>, <strong>SLCO1B1 521T>C TC</strong> e <strong>OPRM1 A118G GG</strong>.
+  </div>
+
+  <!-- CARDIOVASCULAR -->
+  <div class="section-title" style="background:#1a252f; margin-bottom:0; font-size:10px; padding:4px 10px;">CARDIOVASCULAR</div>
+  <table style="margin-bottom:10px;">
+    <thead>
+      <tr>
+        <th style="width:22%;">Classe / Fármaco</th>
+        <th style="width:20%;">Gene impactado</th>
+        <th style="width:13%;">Prescrição padrão</th>
+        <th style="width:13%;">Uso com cautela</th>
+        <th style="width:13%;">Alternativa</th>
+        <th style="width:19%;">Orientação resumida</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Antiagregantes -->
+      <tr><td colspan="6" style="background:#f0f0f0; font-weight:bold; font-size:10px; padding:3px 8px;">Antiagregantes plaquetários</td></tr>
+      <tr>
+        <td>Prasugrel (Effient)</td>
+        <td><span class="geno">CYP2C19 — não depende</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Alternativa preferencial ao clopidogrel neste paciente. Ativação independente de CYP2C19.</td>
+      </tr>
+      <tr>
+        <td>Ticagrelor (Brilinta)</td>
+        <td><span class="geno">CYP3A5 *3/*3</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Ação direta, não requer ativação. CYP3A5 *3/*3: exposição levemente aumentada — sem ajuste necessário.</td>
+      </tr>
+      <tr>
+        <td><strong>Clopidogrel (Plavix)</strong></td>
+        <td><span class="geno">CYP2C19 *2/*2</span></td>
+        <td></td><td></td><td style="text-align:center; font-weight:bold;">🚩 TROCAR</td>
+        <td style="font-size:10px;">Pró-fármaco. Metabolizador lento: metabólito ativo não formado. Risco de trombose em stent.</td>
+      </tr>
+      <!-- Anticoagulantes -->
+      <tr><td colspan="6" style="background:#f0f0f0; font-weight:bold; font-size:10px; padding:3px 8px;">Anticoagulantes</td></tr>
+      <tr>
+        <td>Apixabana (Eliquis)</td>
+        <td><span class="geno">CYP3A5 *3/*3</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Metabolismo mínimo por CYP3A. Polimorfismos sem impacto clínico significativo. Prescrição padrão.</td>
+      </tr>
+      <tr>
+        <td>Rivaroxabana (Xarelto)</td>
+        <td><span class="geno">CYP3A5 *3/*3</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Sem impacto clinicamente relevante dos polimorfismos identificados. Atenção à polifarmácia com inibidores CYP3A4.</td>
+      </tr>
+      <tr>
+        <td>Varfarina (Coumadin)</td>
+        <td><span class="geno">VKORC1 A/A · CYP2C9 *1/*1</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Alta sensibilidade pelo VKORC1 A/A. Dose estimada: 2–3 mg/dia. Iniciar baixo e titular pelo INR.</td>
+      </tr>
+      <!-- Estatinas -->
+      <tr><td colspan="6" style="background:#f0f0f0; font-weight:bold; font-size:10px; padding:3px 8px;">Estatinas</td></tr>
+      <tr>
+        <td>Atorvastatina (Lipitor)</td>
+        <td><span class="geno">SLCO1B1 TC · CYP3A5 *3/*3</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Duplo impacto: transporte hepático reduzido + eliminação lenta. Monitorar CK. Considerar redução de dose.</td>
+      </tr>
+      <tr>
+        <td>Sinvastatina (Zocor)</td>
+        <td><span class="geno">SLCO1B1 TC · CYP3A5 *3/*3</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Mesmos mecanismos da atorvastatina. Risco de miopatia aumentado. Preferir alternativas com menor dependência dessas vias.</td>
+      </tr>
+      <tr>
+        <td>Lovastatina (Mevacor)</td>
+        <td><span class="geno">SLCO1B1 TC · CYP3A5 *3/*3</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Mesma classe de risco. Evitar doses elevadas. Monitoramento muscular obrigatório.</td>
+      </tr>
+      <tr>
+        <td>Pravastatina (Pravachol)</td>
+        <td><span class="geno">SLCO1B1 TC</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Não metabolizada por CYP3A5. Menor impacto do SLCO1B1 vs. atorvastatina. Alternativa preferencial neste paciente.</td>
+      </tr>
+      <tr>
+        <td>Rosuvastatina (Crestor)</td>
+        <td><span class="geno">SLCO1B1 TC</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Impacto moderado do SLCO1B1 em doses baixas. Não depende de CYP3A5. Alternativa razoável em dose ≤10 mg.</td>
+      </tr>
+      <!-- Beta-bloqueadores -->
+      <tr><td colspan="6" style="background:#f0f0f0; font-weight:bold; font-size:10px; padding:3px 8px;">Beta-bloqueadores</td></tr>
+      <tr>
+        <td>Metoprolol (Lopressor)</td>
+        <td><span class="geno">CYP2D6 *4/*4</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Metabolizador lento CYP2D6: concentrações plasmáticas aumentadas. Risco de bradicardia e hipotensão. Iniciar com dose baixa e titular com monitoramento de FC e PA.</td>
+      </tr>
+      <tr>
+        <td>Carvedilol (Coreg)</td>
+        <td><span class="geno">CYP2D6 *4/*4</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Metabolismo parcial por CYP2D6. Exposição aumentada em metabolizadores lentos. Titulação cuidadosa necessária.</td>
+      </tr>
+      <tr>
+        <td>Propranolol (Inderal)</td>
+        <td><span class="geno">CYP2D6 *4/*4</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Níveis plasmáticos elevados em metabolizadores lentos. Monitorar bradicardia.</td>
+      </tr>
+      <!-- Antiarrítmicos -->
+      <tr><td colspan="6" style="background:#f0f0f0; font-weight:bold; font-size:10px; padding:3px 8px;">Antiarrítmicos</td></tr>
+      <tr>
+        <td>Flecainida (Tambocor)</td>
+        <td><span class="geno">CYP2D6 *4/*4</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Concentrações elevadas em metabolizadores lentos. Monitorar ECG e concentrações plasmáticas. Titular com cautela.</td>
+      </tr>
+      <tr>
+        <td>Propafenona (Rythmol)</td>
+        <td><span class="geno">CYP2D6 *4/*4</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Exposição ao fármaco e ao metabólito ativo alterada em metabolizadores lentos. Monitoramento de ECG obrigatório.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <div>Paciente: CARLOS AUGUSTO FERREIRA LIMA &nbsp;|&nbsp; DOCUMENTO DIDÁTICO FICTÍCIO</div>
+    <div>GP-2026-00842</div>
+    <div>Página 5 de 7</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PÁGINA 6 — MEDICAMENTOS POTENCIALMENTE IMPACTADOS (2/3)
+     Psicotrópicos: antidepressivos + antipsicóticos + benzodiazepinas
+     ═══════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="header">
+    <div><div class="logo-name">UFAC · GenômiCA</div><div class="logo-sub">Laboratório de Farmacogenômica Clínica — UFAC</div></div>
+    <div class="report-title">TESTE FARMACOGENÉTICO</div>
+  </div>
+
+  <div class="section-title" style="margin-bottom:4px;">MEDICAMENTOS POTENCIALMENTE IMPACTADOS (continuação)</div>
+  <div style="font-size:10px; color:#666; margin-bottom:8px; padding:3px 0;">
+    Genes relevantes nesta seção: <strong>CYP2C19 *2/*2</strong> (metabolizador lento) · <strong>CYP2D6 *4/*4</strong> (metabolizador lento) · <strong>CYP3A5 *3/*3</strong> (metabolizador lento)
+  </div>
+
+  <!-- ANTIDEPRESSIVOS -->
+  <div class="section-title" style="background:#1a252f; margin-bottom:0; font-size:10px; padding:4px 10px;">PSICOTRÓPICOS — ANTIDEPRESSIVOS</div>
+  <table style="margin-bottom:9px;">
+    <thead>
+      <tr>
+        <th style="width:22%;">Fármaco</th>
+        <th style="width:20%;">Gene impactado</th>
+        <th style="width:13%;">Prescrição padrão</th>
+        <th style="width:13%;">Uso com cautela</th>
+        <th style="width:13%;">Alternativa</th>
+        <th style="width:19%;">Orientação resumida</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Sertralina (Zoloft)</td>
+        <td><span class="geno">CYP2C19 *2/*2</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Concentrações plasmáticas elevadas. Iniciar com 25 mg/dia. Titular lentamente.</td>
+      </tr>
+      <tr>
+        <td>Escitalopram (Lexapro)</td>
+        <td><span class="geno">CYP2C19 *2/*2</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Principal via de metabolismo é CYP2C19. Metabolizadores lentos: nível aumentado com risco de prolongamento QTc. Dose máxima reduzida para 10 mg/dia.</td>
+      </tr>
+      <tr>
+        <td>Citalopram (Celexa)</td>
+        <td><span class="geno">CYP2C19 *2/*2</span></td>
+        <td></td><td></td><td style="text-align:center;">⚠️ evitar</td>
+        <td style="font-size:10px;">Alto risco de prolongamento QTc em metabolizadores lentos. CPIC recomenda evitar ou usar dose máxima de 20 mg/dia com monitoramento de ECG.</td>
+      </tr>
+      <tr>
+        <td>Amitriptilina (Elavil)</td>
+        <td><span class="geno">CYP2C19 *2/*2 · CYP2D6 *4/*4</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Duplo impacto: ambas as vias de metabolismo comprometidas. Concentrações significativamente elevadas. Iniciar com dose mínima; monitorar ECG e nível sérico.</td>
+      </tr>
+      <tr>
+        <td>Nortriptilina (Pamelor)</td>
+        <td><span class="geno">CYP2D6 *4/*4</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Metabolizadores lentos CYP2D6: concentrações 3–5× acima do normal. CPIC recomenda redução de 25% da dose inicial e monitoramento plasmático.</td>
+      </tr>
+      <tr>
+        <td>Imipramina (Tofranil)</td>
+        <td><span class="geno">CYP2C19 *2/*2 · CYP2D6 *4/*4</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Metabolismo extenso por ambas as enzimas. Acúmulo significativo esperado. Dose inicial reduzida; monitoramento sérico obrigatório.</td>
+      </tr>
+      <tr>
+        <td>Duloxetina (Cymbalta)</td>
+        <td><span class="geno">CYP2D6 *4/*4</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Impacto clínico limitado do CYP2D6 neste fármaco. Pode ser prescrito em dose padrão com titulação cuidadosa.</td>
+      </tr>
+      <tr>
+        <td>Venlafaxina (Effexor)</td>
+        <td><span class="geno">CYP2D6 *4/*4</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Metabolizadores lentos CYP2D6 apresentam menor conversão ao metabólito ativo (O-desmetilvenlafaxina). Efeito clínico geralmente preservado. Prescrição padrão com monitoramento.</td>
+      </tr>
+      <tr>
+        <td>Mirtazapina (Remeron)</td>
+        <td><span class="geno">CYP2D6 *4/*4</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">CYP2D6 tem papel secundário no metabolismo. Prescrição na dose padrão com titulação cuidadosa.</td>
+      </tr>
+      <tr>
+        <td>Fluoxetina (Prozac)</td>
+        <td><span class="geno">CYP2D6 *4/*4</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Concentrações elevadas em metabolizadores lentos. Adicionalmente, a fluoxetina é inibidora potente do CYP2D6 — cautela ao combinar com outros substratos desta enzima.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ANTIPSICÓTICOS -->
+  <div class="section-title" style="background:#1a252f; margin-bottom:0; font-size:10px; padding:4px 10px;">PSICOTRÓPICOS — ANTIPSICÓTICOS</div>
+  <table style="margin-bottom:9px;">
+    <thead>
+      <tr>
+        <th style="width:22%;">Fármaco</th>
+        <th style="width:20%;">Gene impactado</th>
+        <th style="width:13%;">Prescrição padrão</th>
+        <th style="width:13%;">Uso com cautela</th>
+        <th style="width:13%;">Alternativa</th>
+        <th style="width:19%;">Orientação resumida</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Haloperidol (Haldol)</td>
+        <td><span class="geno">CYP2D6 *4/*4</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Concentrações elevadas em metabolizadores lentos. Risco de efeitos extrapiramidais aumentado. Iniciar com dose mínima e monitorar.</td>
+      </tr>
+      <tr>
+        <td>Risperidona (Risperdal)</td>
+        <td><span class="geno">CYP2D6 *4/*4</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Metabolismo principal por CYP2D6. Metabolizadores lentos: exposição aumentada. Reduzir dose inicial em 25–50% e titular gradualmente.</td>
+      </tr>
+      <tr>
+        <td>Aripiprazol (Abilify)</td>
+        <td><span class="geno">CYP2D6 *4/*4</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">CPIC recomenda redução de dose em metabolizadores lentos. Dose diária máxima: 10 mg (vs. 15–30 mg padrão).</td>
+      </tr>
+      <tr>
+        <td>Quetiapina (Seroquel)</td>
+        <td><span class="geno">CYP3A5 *3/*3</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Metabolismo predominante pelo CYP3A4. Impacto do CYP3A5 *3/*3 limitado. Prescrição padrão com titulação individualizada.</td>
+      </tr>
+      <tr>
+        <td>Clozapina (Clozaril)</td>
+        <td><span class="geno">CYP1A2 *1A/*1A</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Metabolismo por CYP1A2 — indutibilidade possível. Fatores extrínsecos (tabagismo, omeprazol, cafeína) aumentam atividade do CYP1A2 e podem reduzir níveis de clozapina.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- BENZODIAZEPINAS -->
+  <div class="section-title" style="background:#1a252f; margin-bottom:0; font-size:10px; padding:4px 10px;">PSICOTRÓPICOS — BENZODIAZEPINAS</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:22%;">Fármaco</th>
+        <th style="width:20%;">Gene impactado</th>
+        <th style="width:13%;">Prescrição padrão</th>
+        <th style="width:13%;">Uso com cautela</th>
+        <th style="width:13%;">Alternativa</th>
+        <th style="width:19%;">Orientação resumida</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Diazepam (Valium)</td>
+        <td><span class="geno">CYP2C19 *2/*2</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Metabolismo extenso por CYP2C19. Metabolizadores lentos: meia-vida prolongada e sedação aumentada. Dose reduzida e intervalos mais longos.</td>
+      </tr>
+      <tr>
+        <td>Alprazolam (Xanax)</td>
+        <td><span class="geno">CYP3A5 *3/*3</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Metabolismo predominante por CYP3A4. Polimorfismo CYP3A5 com impacto clínico limitado. Prescrição padrão; atenção a inibidores do CYP3A4.</td>
+      </tr>
+      <tr>
+        <td>Lorazepam (Ativan)</td>
+        <td><span class="geno">UGT2B15 *1/*1</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Metabolismo por glucuronidação — não depende de CYP450. Prescrição padrão sem ajuste necessário. Opção segura neste paciente.</td>
+      </tr>
+      <tr>
+        <td>Oxazepam (Serax)</td>
+        <td><span class="geno">UGT2B15 *1/*1</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Glucuronidação como via exclusiva. Independente de CYP450. Boa alternativa para este paciente quando benzodiazepina for necessária.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <div>Paciente: CARLOS AUGUSTO FERREIRA LIMA &nbsp;|&nbsp; DOCUMENTO DIDÁTICO FICTÍCIO</div>
+    <div>GP-2026-00842</div>
+    <div>Página 6 de 7</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     PÁGINA 7 — MEDICAMENTOS POTENCIALMENTE IMPACTADOS (3/3)
+     Dor/Opioides + Gastrointestinal + Outros
+     ═══════════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="header">
+    <div><div class="logo-name">UFAC · GenômiCA</div><div class="logo-sub">Laboratório de Farmacogenômica Clínica — UFAC</div></div>
+    <div class="report-title">TESTE FARMACOGENÉTICO</div>
+  </div>
+
+  <div class="section-title" style="margin-bottom:4px;">MEDICAMENTOS POTENCIALMENTE IMPACTADOS (continuação)</div>
+  <div style="font-size:10px; color:#666; margin-bottom:8px; padding:3px 0;">
+    Genes relevantes: <strong>CYP2D6 *4/*4</strong> · <strong>CYP2C19 *2/*2</strong> · <strong>OPRM1 A118G GG</strong> · <strong>CYP3A5 *3/*3</strong>
+  </div>
+
+  <!-- ANALGÉSICOS / OPIOIDES -->
+  <div class="section-title" style="background:#1a252f; margin-bottom:0; font-size:10px; padding:4px 10px;">DOR — OPIOIDES E ANALGÉSICOS</div>
+  <table style="margin-bottom:9px;">
+    <thead>
+      <tr>
+        <th style="width:22%;">Fármaco</th>
+        <th style="width:20%;">Gene impactado</th>
+        <th style="width:13%;">Prescrição padrão</th>
+        <th style="width:13%;">Uso com cautela</th>
+        <th style="width:13%;">Alternativa</th>
+        <th style="width:19%;">Orientação resumida</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Codeína</strong></td>
+        <td><span class="geno">CYP2D6 *4/*4 · OPRM1 GG</span></td>
+        <td></td><td></td><td style="text-align:center;">🚩 EVITAR</td>
+        <td style="font-size:10px;">Pró-fármaco. Sem conversão a morfina em *4/*4. Receptor opioide adicional­mente alterado. Analgesia ausente.</td>
+      </tr>
+      <tr>
+        <td><strong>Tramadol (Ultram)</strong></td>
+        <td><span class="geno">CYP2D6 *4/*4</span></td>
+        <td></td><td></td><td style="text-align:center;">⚠️ evitar</td>
+        <td style="font-size:10px;">Também pró-fármaco parcialmente dependente de CYP2D6. Metabolizadores lentos: efeito analgésico reduzido. Preferir alternativa não dependente de CYP2D6.</td>
+      </tr>
+      <tr>
+        <td>Morfina (MS Contin)</td>
+        <td><span class="geno">OPRM1 A118G GG · COMT Met/Met</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Não depende de CYP2D6. Alternativa adequada à codeína. Considerar necessidade de dose maior pelo perfil OPRM1 A118G. Titular individualmente.</td>
+      </tr>
+      <tr>
+        <td>Hidromorfona (Dilaudid)</td>
+        <td><span class="geno">OPRM1 A118G GG</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Não metabolizada por CYPs. Boa alternativa para este paciente. Dose pode necessitar de ajuste ascendente pelo perfil OPRM1.</td>
+      </tr>
+      <tr>
+        <td>Oxicodona (Oxycontin)</td>
+        <td><span class="geno">CYP2D6 *4/*4 · CYP3A5 *3/*3</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Conversão ao metabólito ativo (oximorfona) reduzida em *4/*4. Porém o fármaco principal tem efeito próprio via CYP3A4. Usar com titulação individualizada.</td>
+      </tr>
+      <tr>
+        <td>Fentanila (Actiq)</td>
+        <td><span class="geno">CYP3A5 *3/*3 · OPRM1 GG</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">CYP3A5 *3/*3 pode elevar levemente os níveis. OPRM1 GG sugere necessidade de dose maior para analgesia equivalente. Titulação cuidadosa obrigatória pela estreita janela terapêutica.</td>
+      </tr>
+      <tr>
+        <td>Metadona (Dolophine)</td>
+        <td><span class="geno">CYP2B6 *1/*1</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Metabolismo por CYP2B6 e CYP3A4. CYP2B6 *1/*1 normal — sem ajuste farmacogenético necessário. Titular conforme resposta clínica e ECG (risco de QTc).</td>
+      </tr>
+      <!-- AINEs -->
+      <tr><td colspan="6" style="background:#f0f0f0; font-weight:bold; font-size:10px; padding:3px 8px;">Anti-inflamatórios não esteroides (AINEs)</td></tr>
+      <tr>
+        <td>Celecoxibe (Celebrex)</td>
+        <td><span class="geno">CYP2C9 *1/*1</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Metabolismo por CYP2C9 — normal neste paciente. Prescrição padrão sem ajuste necessário.</td>
+      </tr>
+      <tr>
+        <td>Ibuprofeno (Advil)</td>
+        <td><span class="geno">CYP2C9 *1/*1</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">CYP2C9 normal. Sem impacto farmacogenético relevante. Prescrição padrão.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- GASTROINTESTINAL -->
+  <div class="section-title" style="background:#1a252f; margin-bottom:0; font-size:10px; padding:4px 10px;">GASTROINTESTINAL</div>
+  <table style="margin-bottom:9px;">
+    <thead>
+      <tr>
+        <th style="width:22%;">Fármaco</th>
+        <th style="width:20%;">Gene impactado</th>
+        <th style="width:13%;">Prescrição padrão</th>
+        <th style="width:13%;">Uso com cautela</th>
+        <th style="width:13%;">Alternativa</th>
+        <th style="width:19%;">Orientação resumida</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Omeprazol (Prilosec)</td>
+        <td><span class="geno">CYP2C19 *2/*2</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Metabolizadores lentos apresentam concentrações mais altas e maior supressão ácida. Efeito <em>favorável</em> neste contexto: eficácia aumentada em úlcera e DRGE. Prescrição padrão.</td>
+      </tr>
+      <tr>
+        <td>Esomeprazol (Nexium)</td>
+        <td><span class="geno">CYP2C19 *2/*2</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Mesma lógica do omeprazol. Efeito clínico positivo esperado em metabolizadores lentos. Dose padrão ou reduzida pode ser suficiente.</td>
+      </tr>
+      <tr>
+        <td>Lansoprazol (Prevacid)</td>
+        <td><span class="geno">CYP2C19 *2/*2</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Metabolizadores lentos: eficácia aumentada. Prescrição padrão com possibilidade de redução de dose após resposta clínica.</td>
+      </tr>
+      <tr>
+        <td>Ondansetrona (Zofran)</td>
+        <td><span class="geno">CYP2D6 *4/*4</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Impacto clínico do CYP2D6 limitado neste fármaco. Prescrição padrão sem ajuste necessário.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- DIABETES / OUTROS -->
+  <div class="section-title" style="background:#1a252f; margin-bottom:0; font-size:10px; padding:4px 10px;">DIABETES · ANTICONVULSIVANTES · OUTROS</div>
+  <table style="margin-bottom:10px;">
+    <thead>
+      <tr>
+        <th style="width:22%;">Fármaco</th>
+        <th style="width:20%;">Gene impactado</th>
+        <th style="width:13%;">Prescrição padrão</th>
+        <th style="width:13%;">Uso com cautela</th>
+        <th style="width:13%;">Alternativa</th>
+        <th style="width:19%;">Orientação resumida</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Glipizida (Glucotrol)</td>
+        <td><span class="geno">CYP2C9 *1/*1</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Metabolismo por CYP2C9 — normal neste paciente. Prescrição padrão com titulação por hemoglobina glicada.</td>
+      </tr>
+      <tr>
+        <td>Fenitoína (Dilantin)</td>
+        <td><span class="geno">CYP2C9 *1/*1 · CYP2C19 *2/*2</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">CYP2C19 *2/*2 reduz metabolismo secundário. Monitorar concentrações séricas 7–10 dias após início. Fármaco de janela terapêutica estreita.</td>
+      </tr>
+      <tr>
+        <td>Carbamazepina (Tegretol)</td>
+        <td><span class="geno">CYP3A5 *3/*3</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">Estudos preliminares: CYP3A5 *3/*3 associado a concentrações 30% maiores de carbamazepina. Impacto clínico não bem estabelecido. Prescrição padrão com monitoramento.</td>
+      </tr>
+      <tr>
+        <td>Voriconazol (Vfend)</td>
+        <td><span class="geno">CYP2C19 *2/*2</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Metabolizadores lentos: concentrações plasmáticas significativamente aumentadas. Monitorar toxicidade (alucinações visuais, hepatotoxicidade). Considerar redução de dose e dosagem sérica.</td>
+      </tr>
+      <tr>
+        <td>Metotrexato (Trexall)</td>
+        <td><span class="geno">MTHFR 677 TT</span></td>
+        <td></td><td style="text-align:center;">⚠️</td><td></td>
+        <td style="font-size:10px;">Atividade MTHFR reduzida a ~30%: maior risco de toxicidade ao metotrexato (mucosite, supressão medular). Se prescrito, considerar redução de dose inicial em 25% e suplementação com leucovorina.</td>
+      </tr>
+      <tr>
+        <td>Tacrolimus (Prograf)</td>
+        <td><span class="geno">CYP3A5 *3/*3</span></td>
+        <td style="text-align:center;">✅</td><td></td><td></td>
+        <td style="font-size:10px;">CYP3A5 *3/*3: paciente não expressa proteína CYP3A5. Sem risco de metabolização acelerada. Dose padrão com titulação por nível sérico é adequada.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="border:1px solid #ddd; border-radius:4px; padding:8px 10px; background:#fafafa; font-size:10px; color:#555; line-height:1.6;">
+    <strong style="color:#2c3e50;">Comentários gerais:</strong>
+    Os medicamentos que são metabolizados por várias enzimas simultaneamente, ou por enzimas cujas atividades variam
+    pouco entre indivíduos, tendem a ser menos sensíveis aos marcadores farmacogenéticos detectados por este ensaio.
+    A atividade das enzimas CYP450 depende adicionalmente das condições de função hepática e renal do paciente e pode
+    ser alterada pelo uso concomitante de inibidores ou indutores enzimáticos. O resultado da genotipagem não substitui
+    o monitoramento clínico e terapêutico continuado. Consultar o rótulo de cada medicamento para orientações específicas
+    de administração e ajuste de dose.
+  </div>
+
+  <div class="footer">
+    <div>Paciente: CARLOS AUGUSTO FERREIRA LIMA &nbsp;|&nbsp; DOCUMENTO DIDÁTICO FICTÍCIO</div>
+    <div>GP-2026-00842</div>
+    <div>Página 7 de 7</div>
+  </div>
+</div>
+
+</body>
+</html>
